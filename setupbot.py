@@ -7,12 +7,17 @@ import os, re, glob, sqlite3 as db
 # This is the frame-splitting part (this will probably take a while depending on how fast your computer is)
 
 # Get all the mp4 files in the current folder (change file extension if needed)
-eps = glob.glob("*.mp4")
+eps = glob.glob(f"episodes{os.sep}*.{os.environ.get('FILE_EXTENSION', 'mp4')}")
 
 # Number of frames per second you want the show to be split into
-fps = 1
+fps = int(os.environ.get("FPS", 1))
+captions = os.environ.get("CAPTIONS", "True") == "True"
 
-os.mkdir('frames')
+x_res = int(os.environ.get("X_RES", 1920))
+y_res = int(os.environ.get("Y_RES", 1080))
+
+if not os.path.exists("frames"):
+    os.mkdir("frames")
 
 # Supports common file season-episode formats e.g. S01E01, 01x01, Season 1 Episode 1 etc.
 regx = re.compile(r"(?:.*)(?:s|season|)\s?(\d{1,2})\s?(?:e|x|episode|ep|\n)\s?(\d{1,2})", re.IGNORECASE)
@@ -25,13 +30,27 @@ for ep in eps:
         season, episode = ep_regx.groups()
 
         # All videos will be stored in a folder called 'frames', inside another folder denoting the season number
-        out_path = f'./frames/S{season.zfill(2)}'
+        out_path = f'.{os.sep}frames{os.sep}S{season.zfill(2)}'
         if not os.path.isdir(out_path):
             os.mkdir(out_path)
 
+        filters = [
+            f"fps={fps}",
+            f"scale=(iw*sar)*min({x_res}/(iw*sar)\,{y_res}/ih):ih*min({x_res}/(iw*sar)\,{y_res}/ih)"  # works with 4:3 and 16:9
+        ]
+
+        if os.path.splitext(ep)[1] == ".mkv" and captions:
+            if os.path.sep == "\\":
+                safe_ep = ep.replace("\\", "\\\\")
+            else:
+                safe_ep = ep
+            filters.insert(1, f"subtitles='{safe_ep}'")
+
+        vf_arg = ",".join(filters)
+
         # The outputted frame files will look like 00x00.jpg, where the number on the left side of the x is the episode number, and the number on the right side is the frame number.
         # Also scale down to 360p to save server space (and Twitter compresses the hell out of uploaded media anyway so no point having HD)
-        os.system(f'ffmpeg -i "{ep}" -vf "fps={fps},scale=640:360" {out_path}/{episode}x%d.jpg')
+        os.system(f'ffmpeg -i "{ep}" -vf "{vf_arg}" {out_path}{os.sep}{episode}x%d.jpg')
 
 
 # This half of the script will create the required (SQLite) database entries.
