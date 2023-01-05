@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "every-frame-in-order-bot"
+version = "0.1.0"
+description = "Code for @breaking_frames - a Twitter bot to post every frame of a TV show in order"
+authors = ["pigeonburger"]
+license = "GPLv3"
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.7"
+tweepy = "^4.12.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

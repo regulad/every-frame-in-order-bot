@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  every-frame-in-order-bot:
+    image: ghcr.io/regulad/every-frame-in-order-bot:master
+    build: .
+    restart: always
+    environment:
+      # Bot config
+      SHOW_NAME: "Breaking Bad"
+      RUNS_PER_CYCLE: "1"
+      WAIT_TIME: "120"
+      # Twitter API
+      CONSUMER_KEY: ""
+      CONSUMER_SECRET: ""
+      ACCESS_TOKEN: ""
+      ACCESS_TOKEN_SECRET: ""
+      # Database
+      EVERY_FRAME_SQLITE: "/app/data/framebot.db"
+      FRAME_DIRECTORY: "/app/data/frames"
+    volumes:
+      - "data:/app/data"
+volumes:
+  data:

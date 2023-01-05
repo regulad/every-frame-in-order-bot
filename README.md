@@ -12,14 +12,14 @@ If you make an account running this bot, crediting [@pigeonburger](https://twitt
 
 - A cool TV show
 - Some sort of server/computer that runs 24/7
-- Python version >=3.6
+- Python version >=3.7
 - `tweepy` (install using `pip install -U tweepy`) 
 - A Twitter account with the twitter API consumer key + secret, and access token + secret (with Write permissions).
 - [`FFmpeg`](https://ffmpeg.org) (only for initial setup - splitting the show into frames)
 
 # Setup
 
-1. First, you need a TV series downloaded onto your computer (e.g. as `.mp4` files). Put *every single episode from every season* all in one single folder all together. 
+1. First, you need a TV series downloaded onto your computer (e.g. as `.mp4` files). Put *every single episode from every season* all in one single folder (the `episodes` folder) all together. 
 
     If the video files you have are not in the `mp4` format, change line 10 of `setupbot.py` to the relevant extension (e.g. `*.mkv`)
 
